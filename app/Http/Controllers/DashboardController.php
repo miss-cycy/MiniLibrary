@@ -33,7 +33,7 @@ class DashboardController extends Controller
 
         // Calculate fines and days overdue for each record
         $overdueBorrowRecords->each(function ($borrow) {
-            $borrow->days_overdue = Carbon::now()->diffInDays($borrow->due_date);
+            $borrow->days_overdue = Carbon::now()->diffInDays($borrow->due_date, false);
             $borrow->fine_amount = $borrow->calculateFine();
         });
 

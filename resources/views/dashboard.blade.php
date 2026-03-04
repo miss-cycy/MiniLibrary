@@ -245,7 +245,7 @@
                                 </div>
                                 <div class="text-right flex-shrink-0 ml-3">
                                     <p class="text-sm font-medium text-red-600">₱{{ number_format($overdueBorrow->fine_amount, 2) }}</p>
-                                    <p class="text-xs text-gray-500">{{ $overdueBorrow->days_overdue }} {{ $overdueBorrow->days_overdue == 1 ? 'day' : 'days' }} overdue</p>
+                                    <p class="text-xs text-gray-500">{{ (int)$overdueBorrow->days_overdue }} {{ (int)$overdueBorrow->days_overdue == 1 ? 'day' : 'days' }} overdue</p>
                                 </div>
                             </div>
                         @endforeach
