@@ -254,24 +254,37 @@
                     <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Last 5</span>
                 </div>
                 <div class="space-y-3">
-                    @if ($activeBorrows > 0)
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                    </svg>
+                    @if ($recentBorrows->count() > 0)
+                        @foreach ($recentBorrows as $borrow)
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                <div class="flex items-center space-x-3 flex-1 min-w-0">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-medium text-gray-900 text-sm truncate" title="{{ $borrow->student->full_name ?? 'Unknown Student' }}">
+                                            {{ $borrow->student->full_name ?? 'Unknown Student' }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 truncate" title="{{ $borrow->borrowItems->pluck('book.title')->implode(', ') }}">
+                                            {{ $borrow->borrowItems->pluck('book.title')->implode(', ') }}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="font-medium text-gray-900">Sample Student</p>
-                                    <p class="text-sm text-gray-500">Sample Book Title</p>
+                                <div class="text-right flex-shrink-0 ml-3">
+                                    <p class="text-sm font-medium 
+                                        @if($borrow->status === 'borrowed') text-green-600
+                                        @elseif($borrow->status === 'partially_returned') text-yellow-600
+                                        @elseif($borrow->status === 'returned') text-blue-600
+                                        @else text-gray-600
+                                        @endif">
+                                        {{ ucfirst($borrow->status) }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">{{ $borrow->borrow_date->format('M d, Y') }}</p>
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <p class="text-sm font-medium text-green-600">Active</p>
-                                <p class="text-xs text-gray-500">{{ now()->format('M d, Y') }}</p>
-                            </div>
-                        </div>
+                        @endforeach
                     @else
                         <div class="text-center py-8">
                             <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -291,30 +304,35 @@
                     <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Top 5</span>
                 </div>
                 <div class="space-y-3">
-                    @if ($totalBooks > 0)
-                        <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                    </svg>
+                    @if ($popularBooks->count() > 0)
+                        @foreach ($popularBooks as $index => $book)
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                                <div class="flex items-center space-x-3 flex-1 min-w-0">
+                                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <span class="text-green-600 font-bold text-sm">{{ $index + 1 }}</span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-medium text-gray-900 text-sm truncate" title="{{ $book->title }}">{{ $book->title }}</p>
+                                        <p class="text-sm text-gray-500">
+                                            {{ $book->borrow_items_count }} {{ $book->borrow_items_count == 1 ? 'borrow' : 'borrows' }}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="font-medium text-gray-900">Sample Book Title</p>
-                                    <p class="text-sm text-gray-500">Sample Author</p>
+                                <div class="text-right flex-shrink-0 ml-3">
+                                    <p class="text-sm font-medium text-green-600">
+                                        {{ $book->available_quantity }}/{{ $book->total_quantity }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">available</p>
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <p class="text-sm font-medium text-green-600">5x</p>
-                                <p class="text-xs text-gray-500">borrowed</p>
-                            </div>
-                        </div>
+                        @endforeach
                     @else
                         <div class="text-center py-8">
                             <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                             </svg>
-                            <p class="text-gray-500">No books available</p>
+                            <p class="text-gray-500">No books borrowed yet</p>
+                            <p class="text-sm text-gray-400 mt-1">Popular books will appear here</p>
                         </div>
                     @endif
                 </div>

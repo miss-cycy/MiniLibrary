@@ -55,7 +55,7 @@ class DashboardController extends Controller
         $borrowsGrowth = $borrowsLastWeek > 0 ? 
             round((($borrowsThisWeek - $borrowsLastWeek) / $borrowsLastWeek) * 100, 1) : 0;
 
-        $recentBorrows = Borrow::with(['student'])
+        $recentBorrows = Borrow::with(['student', 'borrowItems.book'])
             ->latest()
             ->take(5)
             ->get();
