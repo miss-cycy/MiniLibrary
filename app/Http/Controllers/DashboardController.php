@@ -23,11 +23,15 @@ class DashboardController extends Controller
             ->whereIn('status', ['borrowed', 'partially_returned'])
             ->count();
 
-        $totalFines = 0;
+        // Get detailed overdue borrow records for display
         $overdueBorrowRecords = Borrow::where('due_date', '<', Carbon::today())
             ->whereIn('status', ['borrowed', 'partially_returned'])
+            ->with(['student', 'borrowItems.book'])
+            ->latest()
+            ->take(5) // Limit to 5 most recent overdue records
             ->get();
 
+        $totalFines = 0;
         foreach ($overdueBorrowRecords as $borrow) {
             $totalFines += $borrow->calculateFine();
         }
@@ -75,6 +79,7 @@ class DashboardController extends Controller
             'totalBorrows',
             'activeBorrows',
             'overdueBorrows',
+            'overdueBorrowRecords',
             'totalFines',
             'studentsGrowth',
             'booksGrowth',
