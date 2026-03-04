@@ -31,9 +31,15 @@ class DashboardController extends Controller
             ->take(5) // Limit to 5 most recent overdue records
             ->get();
 
+        // Calculate fines and days overdue for each record
+        $overdueBorrowRecords->each(function ($borrow) {
+            $borrow->days_overdue = Carbon::now()->diffInDays($borrow->due_date);
+            $borrow->fine_amount = $borrow->calculateFine();
+        });
+
         $totalFines = 0;
         foreach ($overdueBorrowRecords as $borrow) {
-            $totalFines += $borrow->calculateFine();
+            $totalFines += $borrow->fine_amount;
         }
 
         // Calculate percentage changes

@@ -227,10 +227,6 @@
                 <div class="space-y-3">
                     @if ($overdueBorrowRecords->count() > 0)
                         @foreach ($overdueBorrowRecords as $overdueBorrow)
-                            @php
-                                $daysOverdue = Carbon::now()->diffInDays($overdueBorrow->due_date);
-                                $fine = $overdueBorrow->calculateFine();
-                            @endphp
                             <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
                                 <div class="flex items-center space-x-3 flex-1 min-w-0">
                                     <div class="w-10 h-10 bg-red-200 rounded-full flex items-center justify-center flex-shrink-0">
@@ -248,8 +244,8 @@
                                     </div>
                                 </div>
                                 <div class="text-right flex-shrink-0 ml-3">
-                                    <p class="text-sm font-medium text-red-600">₱{{ number_format($fine, 2) }}</p>
-                                    <p class="text-xs text-gray-500">{{ $daysOverdue }} {{ $daysOverdue == 1 ? 'day' : 'days' }} overdue</p>
+                                    <p class="text-sm font-medium text-red-600">₱{{ number_format($overdueBorrow->fine_amount, 2) }}</p>
+                                    <p class="text-xs text-gray-500">{{ $overdueBorrow->days_overdue }} {{ $overdueBorrow->days_overdue == 1 ? 'day' : 'days' }} overdue</p>
                                 </div>
                             </div>
                         @endforeach
