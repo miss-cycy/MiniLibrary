@@ -306,11 +306,11 @@
                     </div>
 
                     <!-- Modal Body -->
-                    <form action="#" method="POST" class="p-6">
+                    <form action="{{ route('students.update', ':student_id:') }}" method="POST" class="p-6"
+                          x-bind:action="selectedStudent ? '{{ route('students.update', ':student_id:') }}'.replace(':student_id:', selectedStudent) : '#'">
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="student_id" x-model="selectedStudent">
-                        <input type="hidden" name="_method" value="PUT">
                         <div class="space-y-4">
                             <div>
                                 <label for="edit_full_name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>

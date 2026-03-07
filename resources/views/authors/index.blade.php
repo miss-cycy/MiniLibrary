@@ -276,7 +276,8 @@
                     </div>
 
                     <!-- Modal Body -->
-                    <form action="#" method="POST" class="p-6">
+                    <form action="{{ route('authors.update', ':author_id:') }}" method="POST" class="p-6"
+                          x-bind:action="selectedAuthor ? '{{ route('authors.update', ':author_id:') }}'.replace(':author_id:', selectedAuthor) : '#'">
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="author_id" x-model="selectedAuthor">
