@@ -109,36 +109,60 @@ class BorrowController extends Controller
         // Debug: Log validated data
         \Log::info('Validated data:', $validated);
 
-        foreach ($validated['returns'] as $returnItem) {
-            // Skip if not selected for return
-            if (!isset($returnItem['selected']) || !$returnItem['selected']) {
-                \Log::info('Skipping item - not selected:', $returnItem);
-                continue;
-            }
-            
-            $borrowItem = BorrowItem::find($returnItem['borrow_item_id']);
-            
-            if ($borrowItem->borrow_id !== $borrow->id) {
-                \Log::info('Skipping item - wrong borrow ID:', $returnItem);
-                continue;
-            }
+        // Use database transaction to ensure all updates succeed or fail together
+        \DB::transaction(function () use ($validated, $borrow) {
+            foreach ($validated['returns'] as $returnItem) {
+                // Skip if not selected for return
+                if (!isset($returnItem['selected']) || !$returnItem['selected']) {
+                    \Log::info('Skipping item - not selected:', $returnItem);
+                    continue;
+                }
+                
+                $borrowItem = BorrowItem::find($returnItem['borrow_item_id']);
+                
+                if ($borrowItem->borrow_id !== $borrow->id) {
+                    \Log::info('Skipping item - wrong borrow ID:', $returnItem);
+                    continue;
+                }
 
-            if ($returnItem['quantity'] > $borrowItem->remaining_quantity) {
-                \Log::info('Quantity exceeds remaining:', [
-                    'requested' => $returnItem['quantity'],
-                    'remaining' => $borrowItem->remaining_quantity
+                if ($returnItem['quantity'] > $borrowItem->remaining_quantity) {
+                    \Log::info('Quantity exceeds remaining:', [
+                        'requested' => $returnItem['quantity'],
+                        'remaining' => $borrowItem->remaining_quantity
+                    ]);
+                    throw new \Exception('Cannot return more books than borrowed.');
+                }
+
+                \Log::info('Processing return:', [
+                    'borrow_item_id' => $returnItem['borrow_item_id'],
+                    'quantity' => $returnItem['quantity'],
+                    'current_returned' => $borrowItem->returned_quantity,
+                    'new_returned' => $borrowItem->returned_quantity + $returnItem['quantity']
                 ]);
-                return redirect()->back()
-                    ->with('error', 'Cannot return more books than borrowed.');
+
+                // Update the borrow item directly
+                $borrowItem->returned_quantity += $returnItem['quantity'];
+                $borrowItem->save();
+                
+                // Update the book available quantity
+                $borrowItem->book->available_quantity += $returnItem['quantity'];
+                $borrowItem->book->save();
+                
+                \Log::info('Updated borrow item:', [
+                    'id' => $borrowItem->id,
+                    'new_returned_quantity' => $borrowItem->returned_quantity
+                ]);
+                
+                \Log::info('Updated book:', [
+                    'id' => $borrowItem->book->id,
+                    'new_available_quantity' => $borrowItem->book->available_quantity
+                ]);
             }
-
-            \Log::info('Processing return:', [
-                'borrow_item_id' => $returnItem['borrow_item_id'],
-                'quantity' => $returnItem['quantity']
-            ]);
-
-            $borrowItem->returnBooks($returnItem['quantity']);
-        }
+            
+            // Update the borrow status after all returns are processed
+            $borrow->updateStatus();
+            \Log::info('Updated borrow status to:', $borrow->status);
+        });
 
         return redirect()->route('borrows.show', $borrow)
             ->with('success', 'Books returned successfully.');

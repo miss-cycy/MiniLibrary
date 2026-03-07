@@ -300,7 +300,7 @@
                 </div>
             </div>
             <div class="p-6">
-                <form action="{{ route('borrows.return', $borrow) }}" method="POST">
+                <form action="{{ route('borrows.return', $borrow) }}" method="POST" id="return-form">
                     @csrf
                     
                     <div class="space-y-6">
@@ -332,10 +332,12 @@
                                             
                                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div>
-                                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                    <div class="flex items-center mb-2">
                                                         <input type="checkbox" name="returns[{{ $borrowItem->id }}][selected]" value="1" class="mr-2" onchange="toggleQuantity({{ $borrowItem->id }})">
-                                                        Return this book
-                                                    </label>
+                                                        <label for="returns[{{ $borrowItem->id }}][selected]" class="text-sm font-medium text-gray-700">
+                                                            Return this book
+                                                        </label>
+                                                    </div>
                                                     <div class="relative">
                                                         <input type="number" name="returns[{{ $borrowItem->id }}][quantity]" 
                                                                id="quantity-{{ $borrowItem->id }}"
@@ -398,42 +400,53 @@ function toggleQuantity(itemId) {
     const checkbox = document.querySelector(`input[name="returns[${itemId}][selected]"]`);
     const quantityInput = document.getElementById(`quantity-${itemId}`);
     
+    console.log('Toggle called for item:', itemId, 'checked:', checkbox.checked);
+    
     if (checkbox.checked) {
         quantityInput.disabled = false;
         quantityInput.required = true;
         quantityInput.focus();
+        console.log('Enabled quantity for item:', itemId);
     } else {
         quantityInput.disabled = true;
         quantityInput.required = false;
         quantityInput.value = '';
+        console.log('Disabled quantity for item:', itemId);
     }
 }
 
 // Enable at least one checkbox selection
 document.addEventListener('DOMContentLoaded', function() {
-    const checkboxes = document.querySelectorAll('input[name$="[selected]"]');
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     const submitButton = document.querySelector('button[type="submit"]');
     const form = document.querySelector('#return-form form');
+    
+    console.log('Found checkboxes:', checkboxes.length);
+    console.log('Found form:', form);
     
     function validateForm() {
         const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
         submitButton.disabled = !anyChecked;
+        console.log('Form validation - any checked:', anyChecked, 'submit disabled:', submitButton.disabled);
     }
     
     // Debug form submission
     if (form) {
         form.addEventListener('submit', function(e) {
-            console.log('Form submitting...');
+            console.log('=== FORM SUBMITTING ===');
             const formData = new FormData(form);
-            console.log('Form data:');
+            console.log('Form data entries:');
             for (let [key, value] of formData.entries()) {
-                console.log(key, value);
+                console.log(`${key}: ${value}`);
             }
         });
     }
     
     checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', validateForm);
+        checkbox.addEventListener('change', function() {
+            console.log('Checkbox changed:', checkbox.name, checkbox.checked);
+            validateForm();
+        });
     });
     
     validateForm(); // Initial check
