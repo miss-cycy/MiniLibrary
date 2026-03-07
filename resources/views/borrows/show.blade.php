@@ -413,10 +413,23 @@ function toggleQuantity(itemId) {
 document.addEventListener('DOMContentLoaded', function() {
     const checkboxes = document.querySelectorAll('input[name$="[selected]"]');
     const submitButton = document.querySelector('button[type="submit"]');
+    const form = document.querySelector('#return-form form');
     
     function validateForm() {
         const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
         submitButton.disabled = !anyChecked;
+    }
+    
+    // Debug form submission
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            console.log('Form submitting...');
+            const formData = new FormData(form);
+            console.log('Form data:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+        });
     }
     
     checkboxes.forEach(checkbox => {

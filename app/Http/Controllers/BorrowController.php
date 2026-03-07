@@ -97,28 +97,45 @@ class BorrowController extends Controller
 
     public function returnBooks(Request $request, Borrow $borrow)
     {
+        // Debug: Log the incoming request data
+        \Log::info('Return request data:', $request->all());
+        
         $validated = $request->validate([
             'returns' => 'required|array|min:1',
             'returns.*.borrow_item_id' => 'required|exists:borrow_items,id',
             'returns.*.quantity' => 'required_if:returns.*.selected,1|integer|min:1',
         ]);
 
+        // Debug: Log validated data
+        \Log::info('Validated data:', $validated);
+
         foreach ($validated['returns'] as $returnItem) {
             // Skip if not selected for return
             if (!isset($returnItem['selected']) || !$returnItem['selected']) {
+                \Log::info('Skipping item - not selected:', $returnItem);
                 continue;
             }
             
             $borrowItem = BorrowItem::find($returnItem['borrow_item_id']);
             
             if ($borrowItem->borrow_id !== $borrow->id) {
+                \Log::info('Skipping item - wrong borrow ID:', $returnItem);
                 continue;
             }
 
             if ($returnItem['quantity'] > $borrowItem->remaining_quantity) {
+                \Log::info('Quantity exceeds remaining:', [
+                    'requested' => $returnItem['quantity'],
+                    'remaining' => $borrowItem->remaining_quantity
+                ]);
                 return redirect()->back()
                     ->with('error', 'Cannot return more books than borrowed.');
             }
+
+            \Log::info('Processing return:', [
+                'borrow_item_id' => $returnItem['borrow_item_id'],
+                'quantity' => $returnItem['quantity']
+            ]);
 
             $borrowItem->returnBooks($returnItem['quantity']);
         }
