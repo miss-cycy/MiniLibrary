@@ -100,10 +100,15 @@ class BorrowController extends Controller
         $validated = $request->validate([
             'returns' => 'required|array|min:1',
             'returns.*.borrow_item_id' => 'required|exists:borrow_items,id',
-            'returns.*.quantity' => 'required|integer|min:1',
+            'returns.*.quantity' => 'required_if:returns.*.selected,1|integer|min:1',
         ]);
 
         foreach ($validated['returns'] as $returnItem) {
+            // Skip if not selected for return
+            if (!isset($returnItem['selected']) || !$returnItem['selected']) {
+                continue;
+            }
+            
             $borrowItem = BorrowItem::find($returnItem['borrow_item_id']);
             
             if ($borrowItem->borrow_id !== $borrow->id) {
