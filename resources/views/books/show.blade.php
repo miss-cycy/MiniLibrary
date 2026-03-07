@@ -193,8 +193,10 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
-                                            {{ $borrowItem->isFullyReturned() ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                            {{ $borrowItem->isFullyReturned() ? 'Returned' : 'Borrowed' }}
+                                            {{ $borrowItem->isFullyReturned() ? 'bg-green-100 text-green-800' : 
+                                               ($borrowItem->returned_quantity > 0 ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                            {{ $borrowItem->isFullyReturned() ? 'Returned' : 
+                                               ($borrowItem->returned_quantity > 0 ? 'Partially Returned' : 'Borrowed') }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
