@@ -333,13 +333,13 @@
                                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div>
                                                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                        Return Quantity
+                                                        Return Quantity (Optional - Leave blank to skip)
                                                     </label>
                                                     <div class="relative">
                                                         <input type="number" name="returns[{{ $borrowItem->id }}][quantity]" 
-                                                               min="1" max="{{ $borrowItem->remaining_quantity }}" required
+                                                               min="1" max="{{ $borrowItem->remaining_quantity }}" 
                                                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B3C5D] focus:border-[#0B3C5D] pr-16"
-                                                               placeholder="Enter quantity">
+                                                               placeholder="Enter quantity or leave blank">
                                                         <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500">
                                                             / {{ $borrowItem->remaining_quantity }}
                                                         </span>

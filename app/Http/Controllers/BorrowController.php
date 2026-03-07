@@ -100,10 +100,17 @@ class BorrowController extends Controller
         $validated = $request->validate([
             'returns' => 'required|array|min:1',
             'returns.*.borrow_item_id' => 'required|exists:borrow_items,id',
-            'returns.*.quantity' => 'required|integer|min:1',
+            'returns.*.quantity' => 'nullable|integer|min:1',
         ]);
 
+        $processedReturns = 0;
+        
         foreach ($validated['returns'] as $returnItem) {
+            // Skip if quantity is empty or not provided
+            if (!isset($returnItem['quantity']) || $returnItem['quantity'] === null || $returnItem['quantity'] === '') {
+                continue;
+            }
+            
             $borrowItem = BorrowItem::find($returnItem['borrow_item_id']);
             
             if ($borrowItem->borrow_id !== $borrow->id) {
@@ -116,6 +123,12 @@ class BorrowController extends Controller
             }
 
             $borrowItem->returnBooks($returnItem['quantity']);
+            $processedReturns++;
+        }
+
+        if ($processedReturns === 0) {
+            return redirect()->back()
+                ->with('error', 'Please enter at least one quantity to return.');
         }
 
         return redirect()->route('borrows.show', $borrow)
