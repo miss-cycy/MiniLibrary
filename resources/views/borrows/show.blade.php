@@ -172,13 +172,13 @@
             <div class="p-6">
                 <div class="space-y-3">
                     @if($borrow->status !== 'returned')
-                        <a href="{{ route('borrows.return', $borrow) }}" 
+                        <button onclick="document.getElementById('return-form').scrollIntoView({ behavior: 'smooth' })" 
                            class="w-full inline-flex items-center justify-center px-4 py-3 bg-[#0B3C5D] text-white rounded-lg hover:bg-[#1a4d6e] transition-colors">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
                             Return Books
-                        </a>
+                        </button>
                     @endif
 
                     <a href="{{ route('borrows.index') }}" 
@@ -285,7 +285,7 @@
 
     <!-- Return Books Form -->
     @if($borrow->status !== 'returned')
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div id="return-form" class="bg-white rounded-xl shadow-sm border border-gray-100">
             <div class="p-6 border-b border-gray-200">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center">
