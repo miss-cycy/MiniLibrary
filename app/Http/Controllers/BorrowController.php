@@ -97,23 +97,29 @@ class BorrowController extends Controller
 
     public function returnBooks(Request $request, Borrow $borrow)
     {
+        \Log::info('Return books method called for borrow #' . $borrow->id);
+        
         $validated = $request->validate([
             'returns' => 'required|array|min:1',
             'returns.*.borrow_item_id' => 'required|exists:borrow_items,id',
             'returns.*.quantity' => 'nullable|integer|min:1',
         ]);
 
+        \Log::info('Validated return data:', $validated);
+
         $processedReturns = 0;
         
         foreach ($validated['returns'] as $returnItem) {
             // Skip if quantity is empty or not provided
             if (!isset($returnItem['quantity']) || $returnItem['quantity'] === null || $returnItem['quantity'] === '') {
+                \Log::info('Skipping empty quantity for item:', $returnItem);
                 continue;
             }
             
             $borrowItem = BorrowItem::find($returnItem['borrow_item_id']);
             
             if ($borrowItem->borrow_id !== $borrow->id) {
+                \Log::info('Skipping wrong borrow item:', $returnItem);
                 continue;
             }
 
@@ -122,6 +128,7 @@ class BorrowController extends Controller
                     ->with('error', 'Cannot return more books than borrowed.');
             }
 
+            \Log::info('Processing return for item #' . $borrowItem->id . ': quantity ' . $returnItem['quantity']);
             $borrowItem->returnBooks($returnItem['quantity']);
             $processedReturns++;
         }
@@ -130,6 +137,8 @@ class BorrowController extends Controller
             return redirect()->back()
                 ->with('error', 'Please enter at least one quantity to return.');
         }
+
+        \Log::info('Return processing complete. Processed ' . $processedReturns . ' returns.');
 
         return redirect()->route('borrows.show', $borrow)
             ->with('success', 'Books returned successfully.');

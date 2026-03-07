@@ -70,6 +70,20 @@ class Borrow extends Model
             ->whereRaw('quantity > returned_quantity')
             ->count() > 0;
 
+        // Debug logging
+        \Log::info('Borrow status update for borrow #' . $this->id, [
+            'allReturned' => $allReturned,
+            'partiallyReturned' => $partiallyReturned,
+            'borrowItems' => $this->borrowItems->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'quantity' => $item->quantity,
+                    'returned_quantity' => $item->returned_quantity,
+                    'remaining' => $item->remaining_quantity
+                ];
+            })
+        ]);
+
         if ($allReturned) {
             $this->status = 'returned';
         } elseif ($partiallyReturned) {
@@ -79,5 +93,7 @@ class Borrow extends Model
         }
 
         $this->save();
+        
+        \Log::info('Updated borrow status to: ' . $this->status);
     }
 }
