@@ -1,59 +1,164 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# MiniLibrary
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A comprehensive library management system built with Laravel 12, designed to streamline book borrowing, cataloging, and user management for educational institutions.
 
-## About Laravel
+## 📚 About MiniLibrary
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+MiniLibrary is a modern web application that provides efficient library management solutions. The system enables librarians to manage book inventories, track borrowing records, and handle user accounts with ease. Built with Laravel's robust framework and enhanced with Tailwind CSS for a responsive, user-friendly interface.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Key Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Book Management**: Complete catalog system with author information, ISBN tracking, and categorization
+- **User Management**: Separate roles for students and librarians with appropriate permissions
+- **Borrowing System**: Streamlined book borrowing and return process with due date tracking
+- **Inventory Tracking**: Real-time monitoring of book availability and borrowing history
+- **Responsive Design**: Modern, mobile-friendly interface using Tailwind CSS
+- **Authentication**: Secure user authentication and authorization system
 
-## Learning Laravel
+## 🛠️ Technology Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- **Backend**: Laravel 12 (PHP 8.2+)
+- **Frontend**: Blade Templates with Tailwind CSS
+- **Database**: MySQL/SQLite
+- **Authentication**: Laravel Breeze
+- **Build Tools**: Vite
+- **Testing**: PHPUnit with Pest
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📋 System Requirements
 
-## Laravel Sponsors
+- PHP 8.2 or higher
+- Composer 2.0 or higher
+- Node.js 18.0 or higher
+- MySQL 8.0 or SQLite 3.0
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🚀 Installation
 
-### Premium Partners
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd MiniLibrary
+   ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+2. **Install dependencies**
+   ```bash
+   composer install
+   npm install
+   ```
 
-## Contributing
+3. **Environment setup**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. **Database setup**
+   ```bash
+   php artisan migrate
+   php artisan db:seed
+   ```
 
-## Code of Conduct
+5. **Build assets**
+   ```bash
+   npm run build
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+6. **Start the development server**
+   ```bash
+   php artisan serve
+   ```
 
-## Security Vulnerabilities
+## 🏗️ Project Structure
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```
+MiniLibrary/
+├── app/
+│   ├── Models/
+│   │   ├── User.php          # User authentication
+│   │   ├── Student.php       # Student information
+│   │   ├── Book.php          # Book catalog
+│   │   ├── Author.php        # Author details
+│   │   ├── Borrow.php        # Borrowing records
+│   │   └── BorrowItem.php    # Individual borrowed items
+│   ├── Http/Controllers/     # Application controllers
+│   └── Http/Requests/        # Form validation
+├── database/
+│   ├── migrations/           # Database schema
+│   └── seeders/             # Sample data
+├── resources/
+│   ├── views/               # Blade templates
+│   └── js/                  # Frontend JavaScript
+└── routes/
+    ├── web.php              # Web routes
+    └── api.php              # API routes
+```
 
-## License
+## 👥 Development Team
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MiniLibrary was developed by a dedicated team of developers:
+
+### Core Developers
+- **Cyrish Mage Cagasan** - Backend Development & Database Design
+- **Stephanie Jane Eleccion** - Frontend Development & UI/UX Design
+- **Jhib Lourence Rendon** - System Architecture
+- **Prixane Jade Gales** - Testing & Quality Assurance
+- **Genesis Maraya** - Testing & Quality Assurance
+
+## 📝 Database Schema
+
+The system uses the following main entities:
+
+- **Users**: Authentication and role management
+- **Students**: Student information and library accounts
+- **Books**: Book catalog with metadata
+- **Authors**: Author information and book relationships
+- **Borrows**: Borrowing transactions and records
+- **Borrow Items**: Individual items within each borrowing transaction
+
+## 🔧 Available Commands
+
+### Development
+```bash
+# Start development server with hot reload
+npm run dev
+
+# Run all services (server, queue, vite)
+composer run dev
+```
+
+### Testing
+```bash
+# Run all tests
+composer run test
+
+# Run specific test
+php artisan test --filter TestName
+```
+
+### Database
+```bash
+# Fresh migration with seeding
+php artisan migrate:fresh --seed
+
+# Create new migration
+php artisan make:migration create_table_name
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Support
+
+For support and inquiries, please contact the development team or create an issue in the repository.
+
+---
+
+**MiniLibrary** - Simplifying library management, one book at a time. 📖
